@@ -6,7 +6,10 @@ import Blog from "@/models/BlogModel";
 // @route   GET /api/blogs
 export async function GET() {
    try {
+      await connectDB();
+
       const blogs = await Blog.find();
+      return NextResponse.json(blogs, { status: 200 });
    } catch (err) {
       console.log(err.message);
    }

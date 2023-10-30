@@ -13,6 +13,10 @@ const BlogSchema = new Schema(
          required: [true, "Please provide content"],
          trim: true,
       },
+      likes: {
+         type: Number,
+         default: 0,
+      },
       user: {
          type: Schema.Types.ObjectId,
          ref: "User",
