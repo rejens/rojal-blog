@@ -6,6 +6,7 @@ const BlogContext = createContext();
 
 function BlogContextProvider({ children }) {
    const initialValues = {
+      pendingPosts: [],
       posts: [],
       users: [],
    };
@@ -13,11 +14,21 @@ function BlogContextProvider({ children }) {
    //for managing global state
    const [state, dispatch] = useReducer(FarmReducer, initialValues);
 
-   // console.log("post", state.posts);
-   // console.log("user", state.users);
-
    //fetches post that is still in pending state
    const fetchPendingPosts = async () => {
+      try {
+         const res = await fetch(
+            `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs?status=pending`
+         );
+         const pendingPosts = await res.json();
+         dispatch({ type: "MANAGE_PENDING_POSTS", payload: pendingPosts });
+      } catch (err) {
+         console.log(err);
+      }
+   };
+
+   //fetch number of posts
+   const fetchPosts = async () => {
       try {
          const res = await fetch(
             `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs`
@@ -42,13 +53,36 @@ function BlogContextProvider({ children }) {
       }
    };
 
+   //accept or reject post
+   const changeStatus = async (id, status) => {
+      try {
+         console.log(id, status);
+         const res = await fetch(
+            `${process.env.NEXT_PUBLIC_SITE_URL}/api/blogs/${id}`,
+            {
+               method: "PUT",
+               headers: {
+                  "Content-Type": "application/json",
+               },
+               body: JSON.stringify({ status }),
+            }
+         );
+         if (res.status === 200) fetchPendingPosts();
+      } catch (err) {
+         console.log(err);
+      }
+   };
+
    useEffect(() => {
       fetchPendingPosts();
       fetchUsers();
+      fetchPosts();
    }, []);
 
    return (
-      <BlogContext.Provider value={{ ...state, fetchPendingPosts, fetchUsers }}>
+      <BlogContext.Provider
+         value={{ ...state, fetchPendingPosts, fetchUsers, changeStatus }}
+      >
          {children}
       </BlogContext.Provider>
    );

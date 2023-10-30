@@ -6,6 +6,12 @@ export default function FarmReducer(state, action) {
             posts: action.payload,
          };
 
+      case "MANAGE_PENDING_POSTS":
+         return {
+            ...state,
+            pendingPosts: action.payload,
+         };
+
       case "MANAGE_USERS":
          return {
             ...state,

@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { BlogContextProvider } from "@/components/context/BlogContext";
+
+import Provider from "@/components/provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -12,9 +13,10 @@ export const metadata = {
 export default function RootLayout({ children }) {
    return (
       <html lang="en">
-         <BlogContextProvider>
-            <body className={inter.className}>{children}</body>
-         </BlogContextProvider>
+         <body suppressHydrationWarning={true}>
+            <Provider>{children}</Provider>
+            {/* {children} */}
+         </body>
       </html>
    );
 }
