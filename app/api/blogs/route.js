@@ -4,11 +4,19 @@ import Blog from "@/models/BlogModel";
 
 // @desc    Get all blogs
 // @route   GET /api/blogs
-export async function GET() {
+export async function GET(request, { params }) {
    try {
       await connectDB();
 
-      const blogs = await Blog.find();
+      const { searchParams } = new URL(request.url);
+      const status = searchParams.get("status");
+
+      let blogs;
+      if (status === "pending") {
+         blogs = await Blog.find({ status: "pending" });
+      } else {
+         blogs = await Blog.find();
+      }
       return NextResponse.json(blogs, { status: 200 });
    } catch (err) {
       console.log(err.message);

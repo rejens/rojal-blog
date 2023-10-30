@@ -22,6 +22,11 @@ const BlogSchema = new Schema(
          ref: "User",
          required: true,
       },
+      status: {
+         type: String,
+         enum: ["accepted", "rejected", "pending"],
+         default: "pending",
+      },
    },
    { timestamps: true }
 );
